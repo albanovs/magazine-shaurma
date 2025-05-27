@@ -16,30 +16,22 @@ const HeroSection = () => {
 
   const slides = [
     {
-      title: "НЕПОВТОРИМАЯ ШАУРМА",
-      subtitle: "НА УГЛЯХ",
-      bgImageDesktop: "/images/snapedit_1747988547002.jpg",
+      bgImageDesktop: "/images/1.png",
       bgImageMobile: "/images/mobile1.png",
       textColor: "text-white"
     },
     {
-      title: "БЕСПЛАТНАЯ ДОСТАВКА",
-      subtitle: "ДОСТАВКА ОТ 1500 РУБЛЕЙ",
-      bgImageDesktop: "/images/snapedit_1747988738802.jpg",
+      bgImageDesktop: "/images/2.png",
       bgImageMobile: "/images/snapedit_1747988547002.jpg",
       textColor: "text-white"
     },
     {
-      title: "СОЧНОЕ МЯСО",
-      subtitle: "НА МАНГАЛЕ",
-      bgImageDesktop: "/images/snapedit_1747988642717.jpg",
+      bgImageDesktop: "/images/3.png",
       bgImageMobile: "/images/mobile2.png",
       textColor: "text-white"
     },
     {
-      title: "ПРИНИМАЕМ ЗАКАЗЫ",
-      subtitle: "НА ПРАЗДНИКИ И КОРПОРАТИВЫ",
-      bgImageDesktop: "/images/snapedit_1747988454367.jpg",
+      bgImageDesktop: "/images/4.png",
       bgImageMobile: "/images/mobile3.png",
       textColor: "text-white"
     }
@@ -69,7 +61,7 @@ const HeroSection = () => {
 
   return (
     <div className="mb-20">
-      <div className="relative h-[400px] md:h-[554px] overflow-hidden rounded-[10px] my-6 mx-4 md:mx-auto md:container">
+      <div className="relative h-[400px] md:h-[447px] overflow-hidden rounded-[10px] my-6 mx-4 md:mx-auto md:container">
         <div
           className="flex transition-transform duration-500 ease-in-out h-full"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -87,21 +79,15 @@ const HeroSection = () => {
                 backgroundPosition: "center"
               }}
             >
-              <div className="absolute inset-0 opacity-10 pointer-events-none">
-                <div className="absolute top-10 left-10 w-16 h-16 md:w-20 md:h-20 bg-white rounded-full" />
-                <div className="absolute top-24 right-10 w-12 h-12 md:w-16 md:h-16 bg-white rounded-full" />
-                <div className="absolute bottom-20 left-16 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full" />
-                <div className="absolute bottom-24 right-8 w-16 h-16 md:w-24 md:h-24 bg-white rounded-full" />
-              </div>
-              <div className={`${slide.title === "БЕСПЛАТНАЯ ДОСТАВКА" ? "flex" : "hidden"} container mx-auto px-4 py-12 md:py-16 relative z-10 h-full lg:flex items-center`}>
+              <div className={`hidden container mx-auto px-4 py-12 md:py-16 relative z-10 h-full lg:flex items-center`}>
                 <div className="w-full">
                   <div className="max-w-xl">
                     <h1 className={`text-2xl md:text-5xl font-bold ${slide.textColor} mb-3 md:mb-4`}>
                       {slide.title}
                     </h1>
-                    <div className="bg-red-500 text-white px-3 md:px-6 py-1.5 md:py-3 rounded-lg inline-block mb-5 md:mb-6 text-xl md:text-4xl font-bold shadow-md">
+                    {/* <div className="bg-red-500 text-white px-3 md:px-6 py-1.5 md:py-3 rounded-lg inline-block mb-5 md:mb-6 text-xl md:text-4xl font-bold shadow-md">
                       {slide.subtitle}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
