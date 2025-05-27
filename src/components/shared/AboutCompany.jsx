@@ -36,8 +36,8 @@ function AboutCompany() {
             <div
                 className="hero-section bg-cover bg-center h-full lg:h-[400px] w-full py-6 lg:py-0  md:flex md:flex-row flex flex-col items-center justify-center gap-8 md:gap-8 "
             >
-                <div className='md:flex lg:mx-20 px-5 lg:px-0 md:flex-row flex flex-col items-center justify-center gap-8 w-full'>
-                    <div className='space-y-4 px-10 pt-10 w-full  min-h-[202px] h-full bg-[#0F1F2F] rounded-[10px]'>
+                <div className='md:flex lg:mx-20 px-5 lg:px-0 md:flex-row flex text-sm flex-col items-center justify-center gap-8 w-full'>
+                    <div className='space-y-4 px-10 pt-10 w-full  min-h-[202px] pb-10 h-full bg-[#0F1F2F] rounded-[10px]'>
                         <h2 className='text-[22px] text-[#FECE00]'>Профессионалы своего дела</h2>
                         <p className='lg:w-[317px]  text-[16px] text-white'>Все наши повара умеют готовить шашлык закрытыми глазами сочный, мягкий и незабываемо вкусный.</p>
                     </div>

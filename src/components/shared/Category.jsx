@@ -1,32 +1,55 @@
 'use client'
-import React, { useState } from 'react'
+import React from 'react'
 
-export default function Category() {
+export default function Category({ productGroups, onSelectCategory, loading }) {
+    const [activeCategory, setActiveCategory] = React.useState('Все');
 
-    const [activeCategory, setActiveCategory] = useState('Все');
-    const categories = [
-        'Все', 'Шаурма', 'Шаверма', 'Шашлык и Гриль',
-        'Гарниры', 'Соусы и Добавки', 'Комбо', 'Напитки собственного производства'
-    ];
+    function handleClick(category) {
+        setActiveCategory(category);
+        onSelectCategory(category);
+    }
+
+    const skeletons = Array(10).fill(null);
 
     return (
-        <div className='lg:mx-20 mx-5'>
+        <div className="sticky top-0 bg-[#0F1F2F] z-10 lg:mx-20 mx-5 py-3">
             <div className="text-[16px]">
-                <div className="container mx-auto">
-                    <div className="flex gap-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                        {categories.map((category) => (
+                <div className="flex lg:gap-4 gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    {loading ? (
+                        <>
+                            {skeletons.map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="w-[100px] h-[40px] bg-gray-300 rounded-[10px] animate-pulse"
+                                ></div>
+                            ))}
+                        </>
+                    ) : (
+                        <>
                             <button
-                                key={category}
-                                onClick={() => setActiveCategory(category)}
-                                className={`px-6 py-2 rounded-[10px] whitespace-nowrap transition-all ${activeCategory === category
+                                onClick={() => handleClick('Все')}
+                                className={`px-6 py-2 rounded-[10px] whitespace-nowrap transition-all ${activeCategory === 'Все'
                                     ? 'bg-yellow-400 text-black'
                                     : 'bg-[#EDF6FF] text-[#0F1F2F] hover:bg-gray-600'
                                     }`}
                             >
-                                {category}
+                                Все
                             </button>
-                        ))}
-                    </div>
+
+                            {productGroups.map((category) => (
+                                <button
+                                    key={category.id}
+                                    onClick={() => handleClick(category.id)}
+                                    className={`px-6 py-2 rounded-[10px] whitespace-nowrap transition-all ${activeCategory === category.id
+                                        ? 'bg-yellow-400 text-black'
+                                        : 'bg-[#EDF6FF] text-[#0F1F2F] hover:bg-gray-600'
+                                        }`}
+                                >
+                                    {category.name}
+                                </button>
+                            ))}
+                        </>
+                    )}
                 </div>
             </div>
         </div>

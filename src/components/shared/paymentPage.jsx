@@ -1,14 +1,32 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function OrderForm() {
     const [deliveryMethod, setDeliveryMethod] = useState('pickup');
     const [paymentMethod, setPaymentMethod] = useState('card');
     const [selectedAddress, setSelectedAddress] = useState('ул. Мира, 30');
 
+    const [cartItems, setCartItems] = useState([]);
+
+    useEffect(() => {
+        const savedCart = localStorage.getItem('cartItems');
+        if (savedCart) {
+            setCartItems(JSON.parse(savedCart));
+        } 
+    }, []);
+
+    const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+    }, [cartItems]);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        alert('Заказ отправлен! Спасибо :)');
+    };
+
     return (
-        <div className=" text-white mt-10 mb-20">
+        <form onSubmit={handleSubmit} className="text-white mt-10 mb-20">
             <div className="w-full flex flex-col lg:flex-row gap-6">
                 <div className="bg-[#2B445D] p-6 rounded-md flex-1">
                     <h2 className="text-xl font-semibold mb-4">Детали заказа</h2>
@@ -23,16 +41,16 @@ export default function OrderForm() {
 
                     <div className="flex gap-2 mb-4">
                         <button
+                            type="button"
                             onClick={() => setDeliveryMethod('pickup')}
-                            className={`px-4 py-1 rounded-lg border border-yellow-400 ${deliveryMethod === 'pickup' ? 'bg-yellow-400 text-black' : 'text-white'
-                                }`}
+                            className={`px-4 py-1 rounded-lg border border-yellow-400 ${deliveryMethod === 'pickup' ? 'bg-yellow-400 text-black' : 'text-white'}`}
                         >
                             Самовывоз
                         </button>
                         <button
+                            type="button"
                             onClick={() => setDeliveryMethod('delivery')}
-                            className={`px-4 py-1 rounded-lg border border-yellow-400 ${deliveryMethod === 'delivery' ? 'bg-yellow-400 text-black' : 'text-white'
-                                }`}
+                            className={`px-4 py-1 rounded-lg border border-yellow-400 ${deliveryMethod === 'delivery' ? 'bg-yellow-400 text-black' : 'text-white'}`}
                         >
                             Доставка
                         </button>
@@ -40,66 +58,32 @@ export default function OrderForm() {
 
                     {deliveryMethod === 'delivery' && (
                         <div className="space-y-4">
-                            <input type="text" placeholder="Город*" className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
-                            <input type="text" placeholder="Улица*" className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
-                            <input type="text" placeholder="Дом*" className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
-                            <input type="text" placeholder="Квартира*" className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
-                            <input type="text" placeholder="Время доставки*" className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
+                            <input type="text" placeholder="Город*" required className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
+                            <input type="text" placeholder="Улица*" required className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
+                            <input type="text" placeholder="Дом*" required className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
+                            <input type="text" placeholder="Квартира*" required className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
+                            <input type="text" placeholder="Время доставки*" required className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
                             <textarea placeholder="Комментарий курьеру" className="w-full p-3 rounded-md bg-transparent border border-gray-500 focus:outline-none" />
                         </div>
                     )}
 
-                    {
-                        deliveryMethod === 'pickup' && (
-                            <div className="mt-4 space-y-2">
-                                <label className="flex items-center gap-2">
+                    {deliveryMethod === 'pickup' && (
+                        <div className="mt-4 space-y-2">
+                            {['ул. Мира, 30', 'ул. Куйбышева, 38', 'ул. Екатерининская, 30', 'ул. Ким, 69'].map(addr => (
+                                <label key={addr} className="flex items-center gap-2">
                                     <input
                                         type="radio"
                                         name="pickup-address"
-                                        value="ул. Мира, 30"
-                                        checked={selectedAddress === 'ул. Мира, 30'}
-                                        onChange={() => setSelectedAddress('ул. Мира, 30')}
+                                        value={addr}
+                                        checked={selectedAddress === addr}
+                                        onChange={() => setSelectedAddress(addr)}
                                         className="accent-red-500"
                                     />
-                                    <span>ул. Мира, 30</span>
+                                    <span>{addr}</span>
                                 </label>
-
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        name="pickup-address"
-                                        value="ул. Куйбышева, 38"
-                                        checked={selectedAddress === 'ул. Куйбышева, 38'}
-                                        onChange={() => setSelectedAddress('ул. Куйбышева, 38')}
-                                        className="accent-red-500"
-                                    />
-                                    <span>ул. Куйбышева, 38</span>
-                                </label>
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        name="pickup-address"
-                                        value="ул. Екатерининская, 30"
-                                        checked={selectedAddress === 'ул. Екатерининская, 30'}
-                                        onChange={() => setSelectedAddress('ул. Екатерининская, 30')}
-                                        className="accent-red-500"
-                                    />
-                                    <span>ул. Екатерининская, 30</span>
-                                </label>
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        name="pickup-address"
-                                        value="ул. Ким, 69"
-                                        checked={selectedAddress === 'ул. Ким, 69'}
-                                        onChange={() => setSelectedAddress('ул. Ким, 69')}
-                                        className="accent-red-500"
-                                    />
-                                    <span>ул. Ким, 69</span>
-                                </label>
-                            </div>
-                        )
-                    }
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="bg-[#2B445D] p-6 rounded-md lg:w-[50%]">
@@ -110,14 +94,22 @@ export default function OrderForm() {
                         <span className="font-medium">Цена</span>
                     </div>
 
-                    <div className="flex justify-between mb-2">
-                        <p>Шаурма “Мини” с курицей, 250 г ×1</p>
-                        <p>240 ₽</p>
+                    <div className="flex flex-col gap-2 max-h-60 overflow-auto">
+                        {cartItems.length === 0 ? (
+                            <p className="text-gray-400">Корзина пуста</p>
+                        ) : (
+                            cartItems.map(item => (
+                                <div key={item.id} className="flex justify-between">
+                                    <p>{item.name} ×{item.quantity}</p>
+                                    <p>{item.price * item.quantity} ₽</p>
+                                </div>
+                            ))
+                        )}
                     </div>
 
                     <div className="flex justify-between font-semibold border-t border-gray-600 pt-2 mt-4">
                         <span>Итого:</span>
-                        <span>240 ₽</span>
+                        <span>{total} ₽</span>
                     </div>
 
                     <div className="mt-4 space-y-2">
@@ -151,11 +143,14 @@ export default function OrderForm() {
                         <a href="#" className="underline">политикой конфиденциальности</a>
                     </p>
 
-                    <button className="mt-4 lg:w-[250px] w-full cursor-pointer bg-yellow-400 hover:bg-yellow-300 text-black font-semibold py-3 rounded-md">
+                    <button
+                        type="submit"
+                        className="mt-4 lg:w-[250px] w-full cursor-pointer bg-yellow-400 hover:bg-yellow-300 text-black font-semibold py-3 rounded-md"
+                    >
                         Оформить заказ
                     </button>
                 </div>
             </div>
-        </div>
+        </form>
     );
 }

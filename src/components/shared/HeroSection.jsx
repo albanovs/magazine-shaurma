@@ -3,35 +3,49 @@ import Button from "../ui/button";
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // initial check
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const slides = [
     {
       title: "НЕПОВТОРИМАЯ ШАУРМА",
       subtitle: "НА УГЛЯХ",
-      bgImage: "/images/snapedit_1747988547002.jpg",
+      bgImageDesktop: "/images/snapedit_1747988547002.jpg",
+      bgImageMobile: "/images/mobile1.png",
       textColor: "text-white"
     },
     {
       title: "БЕСПЛАТНАЯ ДОСТАВКА",
       subtitle: "ДОСТАВКА ОТ 1500 РУБЛЕЙ",
-      bgImage: "/images/snapedit_1747988738802.jpg",
+      bgImageDesktop: "/images/snapedit_1747988738802.jpg",
+      bgImageMobile: "/images/snapedit_1747988547002.jpg",
       textColor: "text-white"
     },
     {
       title: "СОЧНОЕ МЯСО",
       subtitle: "НА МАНГАЛЕ",
-      bgImage: "/images/snapedit_1747988642717.jpg",
+      bgImageDesktop: "/images/snapedit_1747988642717.jpg",
+      bgImageMobile: "/images/mobile2.png",
       textColor: "text-white"
     },
     {
       title: "ПРИНИМАЕМ ЗАКАЗЫ",
       subtitle: "НА ПРАЗДНИКИ И КОРПОРАТИВЫ",
-      bgImage: "/images/snapedit_1747988454367.jpg",
+      bgImageDesktop: "/images/snapedit_1747988454367.jpg",
+      bgImageMobile: "/images/mobile3.png",
       textColor: "text-white"
     }
   ];
+
+  const currentBgImage = (slide) => (isMobile ? slide.bgImageMobile : slide.bgImageDesktop);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -65,7 +79,11 @@ const HeroSection = () => {
             <div
               key={index}
               className="w-full h-full flex-shrink-0 relative"
-              style={{ backgroundImage: `url(${slide.bgImage})`, backgroundSize: "cover", backgroundPosition: "center" }}
+              style={{
+                backgroundImage: `url(${currentBgImage(slide)})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }}
             >
               <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="absolute top-10 left-10 w-16 h-16 md:w-20 md:h-20 bg-white rounded-full" />
@@ -73,7 +91,7 @@ const HeroSection = () => {
                 <div className="absolute bottom-20 left-16 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full" />
                 <div className="absolute bottom-24 right-8 w-16 h-16 md:w-24 md:h-24 bg-white rounded-full" />
               </div>
-              <div className="container mx-auto px-4 py-12 md:py-16 relative z-10 h-full flex items-center">
+              <div className={`${slide.title === "БЕСПЛАТНАЯ ДОСТАВКА" ? "flex" : "hidden"} container mx-auto px-4 py-12 md:py-16 relative z-10 h-full lg:flex items-center`}>
                 <div className="w-full">
                   <div className="max-w-xl">
                     <h1 className={`text-2xl md:text-5xl font-bold ${slide.textColor} mb-3 md:mb-4`}>
@@ -82,33 +100,25 @@ const HeroSection = () => {
                     <div className="bg-red-500 text-white px-3 md:px-6 py-1.5 md:py-3 rounded-lg inline-block mb-5 md:mb-6 text-xl md:text-4xl font-bold shadow-md">
                       {slide.subtitle}
                     </div>
-                    <div>
-                      <Button
-                        size="lg"
-                        className="text-white text-sm bg-[#0F1F2F] px-4 md:px-6 py-2 md:py-3 shadow-lg hover:scale-105 transform transition-transform"
-                      >
-                        В каталог
-                      </Button>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
-      <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-[2px] transition-all ${currentSlide === index
-              ? 'bg-yellow-400 w-6 scale-110'
-              : 'bg-[#364A5E] bg-opacity-50 hover:bg-opacity-75'
-              }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
+        <div className="absolute left-1/2 bottom-4 transform -translate-x-1/2 flex space-x-2 z-10">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-3 h-3 rounded-[2px] transition-all ${currentSlide === index
+                ? 'bg-yellow-400 w-6 scale-110'
+                : 'bg-[#364A5E] bg-opacity-50 hover:bg-opacity-75'
+                }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

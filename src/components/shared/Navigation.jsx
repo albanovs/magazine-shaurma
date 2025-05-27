@@ -1,7 +1,7 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HeroSection from "./HeroSection";
-import { MapPin, Phone, ShoppingCart, Menu, X, ShoppingBasket } from "lucide-react";
+import { MapPin, Phone, ShoppingCart, Menu, X, ShoppingBasket, Trash2 } from "lucide-react";
 import Button from "../ui/button";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -11,11 +11,12 @@ const Navigation = () => {
   const [activeCategory, setActiveCategory] = useState('Все');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
   const pathname = usePathname();
 
   const mobilemenu = [
     { name: 'Главная', link: '/' },
-    { name: 'О комапании', link: '/about' },
+    { name: 'О компании', link: '/about' },
     { name: 'Доставка и оплата', link: '/payment' },
     { name: 'Вакансии', link: '/vacancy' },
     { name: 'Отзывы', link: '/notif' }
@@ -28,12 +29,34 @@ const Navigation = () => {
     { address: 'ул. Ким, 69', phone: '202-99-33' }
   ];
 
-  const [selected, setSelected] = useState(addressOptions[0]);
+  useEffect(() => {
+    if (isCartOpen) {
+      const savedCart = localStorage.getItem('cartItems');
+      if (savedCart) {
+        try {
+          const parsed = JSON.parse(savedCart);
+          setCartItems(parsed);
+        } catch {
+          setCartItems([]);
+        }
+      } else {
+        setCartItems([]);
+      }
+    }
+  }, [isCartOpen]);
 
+  const [selected, setSelected] = useState(addressOptions[0]);
+  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleRemoveItem = (uuid) => {
+    const updatedCart = cartItems.filter(item => item.uuid !== uuid);
+    setCartItems(updatedCart);
+    localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+  };
 
   return (
     <div className="bg-[#0F1F2F] lg:px-20 text-white relative z-50">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-y-4">
+      <div className=" container mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-y-4">
         <div className="flex items-center w-full md:w-auto justify-between md:justify-start">
           <a href="/"><Image src="/images/IMG_0218-Photoroom 1.png" alt="logo" width={124} height={78} /></a>
           <div className="flex gap-4">
@@ -129,35 +152,79 @@ const Navigation = () => {
       )}
 
       {isCartOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
+        <div className="fixed inset-0 z-[999] flex justify-end">
           <div
-            className="fixed inset-0 bg-black/60 bg-opacity-30"
+            className="fixed inset-0 bg-black/60"
             onClick={() => setIsCartOpen(false)}
           />
           <div className="relative bg-white w-80 h-full shadow-lg z-50 flex flex-col">
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-white ">Корзина</h2>
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-[#0F1F2F] text-white">
+              <h2 className="text-lg font-semibold">Корзина</h2>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="text-gray-500 hover:text-gray-800"
+                className="text-gray-300 hover:text-white"
+                aria-label="Закрыть корзину"
               >
                 <X size={24} />
               </button>
             </div>
             <div className="p-4 flex-1 overflow-y-auto">
-              <p className="text-gray-500">Ваша корзина пуста.</p>
+              {cartItems.length === 0 ? (
+                <p className="text-gray-500">Ваша корзина пуста.</p>
+              ) : (
+                cartItems.map((item, index) => (
+                  <div key={index} className="flex gap-3 mb-4">
+                    <div className="w-16 h-16 relative flex-shrink-0">
+                      <Image
+                        src={'/images/DSC_0282 1.png'}
+                        alt={item.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        className="rounded"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-between flex-1">
+                      <div className="font-medium text-gray-900">{item.name}</div>
+                      <div className="text-sm text-gray-700">Кол-во: {item.quantity}</div>
+                      <div className="text-sm font-semibold text-gray-900">
+                        {(item.price * item.quantity).toLocaleString()} ₽
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveItem(item.uuid)}
+                      className="text-red-600 hover:text-red-800 ml-2 self-start"
+                      aria-label={`Удалить товар ${item.name} из корзины`}
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
-            <div className="p-4 border-t border-gray-200 flex flex-col gap-2">
-              <a href="/basket" className="w-full text-center cursor-pointer bg-gray-100 text-gray-800 font-medium py-2 rounded hover:bg-gray-200 transition">
-                Перейти в корзину
-              </a>
-              <a href="/order" className="w-full block text-center cursor-pointer bg-yellow-400 text-white font-medium py-2 rounded hover:bg-yellow-500 transition">
-                Оформить заказ
-              </a>
-            </div>
+            {cartItems.length > 0 && (
+              <div className="p-4 border-t border-gray-200 flex flex-col gap-2">
+                <div className="flex justify-between font-semibold text-gray-900">
+                  <span>Итого:</span>
+                  <span>{totalPrice.toLocaleString()} ₽</span>
+                </div>
+                <Link
+                  href="/basket"
+                  className="w-full text-center cursor-pointer bg-gray-100 text-gray-800 font-medium py-2 rounded hover:bg-gray-200 transition"
+                  onClick={() => setIsCartOpen(false)}
+                >
+                  Перейти в корзину
+                </Link>
+                <Link
+                  href="/order"
+                  className="w-full block text-center cursor-pointer bg-yellow-400 text-white font-medium py-2 rounded hover:bg-yellow-500 transition"
+                  onClick={() => setIsCartOpen(false)}
+                >
+                  Оформить заказ
+                </Link>
+              </div>
+            )}
           </div>
         </div>
-
       )}
 
     </div>
