@@ -50,7 +50,7 @@ const HeroSection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [slides.length]);
 
@@ -64,6 +64,8 @@ const HeroSection = () => {
   };
 
   const goToSlide = (index) => setCurrentSlide(index);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
 
   return (
     <div className="mb-20">
@@ -106,19 +108,60 @@ const HeroSection = () => {
             </div>
           ))}
         </div>
+
+        {/* Навигационные точки */}
         <div className="absolute left-1/2 bottom-4 transform -translate-x-1/2 flex space-x-2 z-10">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-[2px] transition-all ${currentSlide === index
-                ? 'bg-yellow-400 w-6 scale-110'
-                : 'bg-[#364A5E] bg-opacity-50 hover:bg-opacity-75'
+                ? "bg-yellow-400 w-6 scale-110"
+                : "bg-[#364A5E] bg-opacity-50 hover:bg-opacity-75"
                 }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
+
+        {/* Стрелочки для десктопа */}
+        {!isMobile && (
+          <>
+            <button
+              onClick={prevSlide}
+              aria-label="Previous slide"
+              className="hidden md:flex absolute top-1/2 left-4 transform -translate-y-1/2 z-20 bg-black bg-opacity-30 hover:bg-opacity-50 text-white rounded-full w-10 h-10 items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              onClick={nextSlide}
+              aria-label="Next slide"
+              className="hidden md:flex absolute top-1/2 right-4 transform -translate-y-1/2 z-20 bg-black bg-opacity-30 hover:bg-opacity-50 text-white rounded-full w-10 h-10 items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
