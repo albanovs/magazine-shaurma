@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import HeroSection from "./HeroSection";
-import { MapPin, Phone, ShoppingCart, Menu, X, ShoppingBasket, Trash2 } from "lucide-react";
+import { MapPin, Phone, ShoppingCart, Menu, X, ShoppingBasket, Trash2, ChevronDown } from "lucide-react";
 import Button from "../ui/button";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -75,22 +75,31 @@ const Navigation = () => {
           </div>
         </div>
         <div className="flex lg:flex-row flex-col items-center md:ml-10 gap-6 text-sm">
-          <div className="flex rounded-[10px] px-4 py-2.5 border border-[#364A5E] items-center gap-2">
+          <div className="flex rounded-[10px] px-4 border border-[#364A5E] items-center gap-2 relative min-w-[200px]">
             <MapPin color="#FECE00" size={16} />
-            <select
-              value={selected.address}
-              onChange={(e) => {
-                const found = addressOptions.find(a => a.address === e.target.value);
-                if (found) setSelected(found);
-              }}
-              className="bg-transparent focus:outline-none"
-            >
-              {addressOptions.map(({ address }) => (
-                <option key={address} value={address} className="text-black">
-                  {address}
-                </option>
-              ))}
-            </select>
+
+            <div className="relative flex-1">
+              <select
+                value={selected.address}
+                onChange={(e) => {
+                  const found = addressOptions.find(a => a.address === e.target.value);
+                  if (found) setSelected(found);
+                }}
+                className="bg-transparent appearance-none focus:outline-none w-full pr-8 text-white h-10 leading-6"
+                style={{ minHeight: '40px' }}
+              >
+                {addressOptions.map(({ address }) => (
+                  <option key={address} value={address} className="text-black">
+                    {address}
+                  </option>
+                ))}
+              </select>
+
+              <ChevronDown
+                size={16}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-white pointer-events-none"
+              />
+            </div>
           </div>
           <div className="flex w-full bg-[#FECE00] rounded-[10px] px-4 py-2.5 items-center gap-2">
             <Phone size={16} color="#0F1F2F" />
