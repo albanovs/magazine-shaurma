@@ -54,11 +54,13 @@ export default function Footer() {
         </div>
         <div className="mt-10 pb-5 border-t border-[#29446d] pt-4 text-xs flex flex-col sm:flex-row justify-between items-center gap-2 opacity-80">
           <p>©2024 «Ереван». Все права защищены.</p>
-          <div className="flex gap-2">
-            <Image src="/images/Group 1171275597.png" alt="ds" width={40} height={35} />
-            <p>Разработано маркетинговым <br />
-              агенством XO-STUDIO</p>
-          </div>
+          <a href="https://xo-webstudio.ru">
+            <div className="flex gap-2">
+              <Image src="/images/Group 1171275597.png" alt="ds" width={40} height={35} />
+              <p>Разработано маркетинговым <br />
+                агенством XO-STUDIO</p>
+            </div>
+          </a>
         </div>
       </div>
     </footer>
