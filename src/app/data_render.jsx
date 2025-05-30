@@ -8,7 +8,7 @@ export default function GlobalPage() {
     const [shopId, setShopId] = useState(null);
     const [productGroups, setProductGroups] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]); // теперь может быть объект или массив
     const [activeCategory, setActiveCategory] = useState('Все');
     const [loading, setLoading] = useState(false);
 
@@ -83,20 +83,12 @@ export default function GlobalPage() {
 
     useEffect(() => {
         if (activeCategory === 'Все') {
-            const shaurmaGroup = productGroups.find(g => g.name === 'Шаурма');
-            const shavermaGroup = productGroups.find(g => g.name === 'Шаверма');
-
-            const prioritizedGroupIds = [
-                shaurmaGroup?.id,
-                shavermaGroup?.id
-            ].filter(Boolean);
-            const sortedProducts = [...allProducts].sort((a, b) => {
-                const aPriority = prioritizedGroupIds.includes(a.groupId) ? prioritizedGroupIds.indexOf(a.groupId) : Infinity;
-                const bPriority = prioritizedGroupIds.includes(b.groupId) ? prioritizedGroupIds.indexOf(b.groupId) : Infinity;
-                return aPriority - bPriority;
+            // сгруппировать все продукты по категориям
+            const grouped = {};
+            productGroups.forEach(group => {
+                grouped[group.name] = allProducts.filter(p => p.groupId === group.id);
             });
-
-            setFilteredProducts(sortedProducts);
+            setFilteredProducts(grouped);
         } else {
             const selectedGroup = productGroups.find(group => group.name === activeCategory);
             if (selectedGroup) {
@@ -107,7 +99,6 @@ export default function GlobalPage() {
             }
         }
     }, [activeCategory, allProducts, productGroups]);
-
 
     useEffect(() => {
         if (!productGroups.length || !allProducts.length) return;
