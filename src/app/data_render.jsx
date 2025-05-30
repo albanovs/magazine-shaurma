@@ -2,7 +2,7 @@
 
 import ProductCard from "../components/shared/ProductCart";
 import Category from "../components/shared/Category";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function GlobalPage() {
     const [shopId, setShopId] = useState(null);
@@ -11,6 +11,7 @@ export default function GlobalPage() {
     const [filteredProducts, setFilteredProducts] = useState([]); // теперь может быть объект или массив
     const [activeCategory, setActiveCategory] = useState('Все');
     const [loading, setLoading] = useState(false);
+    const productsRef = useRef(null);
 
     useEffect(() => {
         async function fetchShops() {
@@ -98,6 +99,9 @@ export default function GlobalPage() {
                 setFilteredProducts([]);
             }
         }
+        if (productsRef.current) {
+            productsRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [activeCategory, allProducts, productGroups]);
 
     useEffect(() => {
@@ -118,7 +122,7 @@ export default function GlobalPage() {
     }, [productGroups, allProducts]);
 
     return (
-        <div className="pb-10">
+        <div ref={productsRef} className="pb-10">
             <Category
                 productGroups={productGroups}
                 onSelectCategory={setActiveCategory}
