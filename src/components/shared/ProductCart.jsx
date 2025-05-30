@@ -48,7 +48,7 @@ const ProductCard = ({ name, product, loading }) => {
               ];
 
               return sortedEntries.map(([groupName, products]) => (
-                <div key={groupName} className="mb-12">
+                <div key={groupName} className="mb-12 border border-y-[#ccc]/20 border-x-[#0F1F2F]">
                   <h2 className="text-2xl font-bold text-white mb-6">{groupName}</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {products.map((product) => (
