@@ -3,10 +3,8 @@ import React from 'react';
 function Contact() {
   return (
     <div className=" relative mt-5 h-[447px] mx-auto px-5  py-16 overflow-hidden">
-      {/* Наложение */}
       <div className="absolute inset-0 bg-black opacity-0 lg:opacity-0 z-0" />
 
-      {/* Контент */}
       <div className="relative z-10 md:pl-20 pb-20 pt-5">
         <h1 className="text-2xl md:text-4xl font-extrabold text-white uppercase">Контакты</h1>
 

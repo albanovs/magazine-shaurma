@@ -41,7 +41,7 @@ export default function DetailItem({ id }) {
                 />
                 <div className='space-y-5'>
                     <h2 className='lg:text-[32px] text-[28px] uppercase font-extrabold'>{filteredProduct.name}</h2>
-                    <p>Состав: лаваш, помидоры....</p>
+                    {/* <p>Состав: лаваш, помидоры....</p> */}
                     <h4 className='lg:text-[32px] text-[28px] font-bold'>{filteredProduct.sellPricePerUnit} ₽</h4>
                     <div className='flex items-center gap-5'>
                         <button

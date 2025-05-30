@@ -4,14 +4,13 @@ import React, { useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import ProductModal from '../ui/ProductModal';
 
-const ProductCard = ({ product, loading }) => {
+const ProductCard = ({ name, product, loading }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const skeletons = Array(8).fill(null); // количество "пустых" карточек
-
+  const skeletons = Array(8).fill(null);
   return (
     <div className='lg:mx-20 mx-5 mt-20'>
-      <h1 className='text-3xl text-white font-extrabold mb-5'>МЕНЮ</h1>
+      <h1 className='text-3xl text-white font-extrabold mb-5'>{name}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {loading ? (
           skeletons.map((_, i) => (

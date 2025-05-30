@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
 import { ShoppingCart, Minus, Plus, Loader2 } from 'lucide-react';
 import Image from 'next/image';
@@ -7,56 +7,63 @@ import { useRouter } from 'next/navigation';
 const ProductModal = ({ isOpen, onClose, product }) => {
     const router = useRouter();
 
-    const spices = [
-        { id: 1, name: 'Острый соус', price: 15 },
-        { id: 2, name: 'Чесночный соус', price: 15 },
-        { id: 3, name: 'Сырный соус', price: 20 },
-        { id: 4, name: 'Барбекю соус', price: 20 },
-        { id: 5, name: 'Кисло-сладкий соус', price: 15 },
-        { id: 6, name: 'Унаги соус', price: 25 },
-        { id: 7, name: 'Соус терияки', price: 20 },
-        { id: 8, name: 'Сливочно-чесночный', price: 20 },
-        { id: 9, name: 'Соус спайси', price: 15 },
-        { id: 10, name: 'Соус васаби', price: 10 },
-        { id: 11, name: 'Имбирь', price: 10 },
-    ];
+    const [addons, setAddons] = useState([]);
 
     const [quantity, setQuantity] = useState(1);
-    const [selectedSpices, setSelectedSpices] = useState([]);
+    const [selectedAddons, setSelectedAddons] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
 
-    const toggleSpice = (id) => {
-        setSelectedSpices((prev) =>
+    useEffect(() => {
+        if (isOpen) {
+            try {
+                const storedAddons = localStorage.getItem('addOns');
+                if (storedAddons) {
+                    setAddons(JSON.parse(storedAddons));
+                } else {
+                    setAddons([
+                        { id: 1, name: 'Острый соус', price: 15 },
+                        { id: 2, name: 'Чесночный соус', price: 15 },
+                        { id: 3, name: 'Сырный соус', price: 20 },
+                    ]);
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке добавок из localStorage:', error);
+            }
+        }
+    }, [isOpen]);
+
+    const toggleAddon = (id) => {
+        setSelectedAddons((prev) =>
             prev.includes(id)
-                ? prev.filter((spiceId) => spiceId !== id)
+                ? prev.filter((addonId) => addonId !== id)
                 : [...prev, id]
         );
     };
 
-    const increase = () => setQuantity(q => q + 1);
-    const decrease = () => setQuantity(q => (q > 1 ? q - 1 : 1));
+    const increase = () => setQuantity((q) => q + 1);
+    const decrease = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
-    const totalSpicesPrice = spices
-        .filter(spice => selectedSpices.includes(spice.id))
-        .reduce((sum, spice) => sum + spice.price, 0);
+    const totalAddonsPrice = addons
+        .filter((addon) => selectedAddons.includes(addon.id))
+        .reduce((sum, addon) => sum + Number(addon.sellPricePerUnit), 0);
 
-    const totalPrice = (product.sellPricePerUnit * quantity) + (totalSpicesPrice * quantity);
+    const totalPrice = (Number(product.sellPricePerUnit) * quantity) + (totalAddonsPrice * quantity);
 
     const handleAddToCart = () => {
         setIsAdding(true);
 
-        const selectedSpicesDetails = spices
-            .filter(spice => selectedSpices.includes(spice.id))
-            .map(spice => ({ id: spice.id, name: spice.name, price: spice.price }));
+        const selectedAddonsDetails = addons
+            .filter((addon) => selectedAddons.includes(addon.id))
+            .map((addon) => ({ id: addon.id, name: addon.name, price: Number(addon.sellPricePerUnit) }));
 
         const orderItem = {
             id: product.id,
             name: product.name,
             uuid: Math.random().toString(36).substring(2, 9),
             image: product.image || 'images/DSC_0282 1.png',
-            price: product.sellPricePerUnit,
+            price: Number(product.sellPricePerUnit),
             quantity,
-            spices: selectedSpicesDetails,
+            spices: selectedAddonsDetails,
         };
 
         const existingCart = JSON.parse(localStorage.getItem('cartItems')) || [];
@@ -69,7 +76,6 @@ const ProductModal = ({ isOpen, onClose, product }) => {
         }, 500);
     };
 
-
     return (
         <Dialog open={isOpen} onClose={onClose} className="relative z-50">
             <div className="fixed inset-0 bg-black/20" aria-hidden="true" />
@@ -80,7 +86,13 @@ const ProductModal = ({ isOpen, onClose, product }) => {
                     <div className="flex flex-col lg:flex-row items-center gap-4 border rounded-xl p-4 mb-6 shadow-sm">
                         <div className="flex-1">
                             <h2 className="text-lg font-semibold">{product?.name}</h2>
-                            <Image className='rounded-lg' src={`${product?.image ? product?.image : '/images/DSC_0282 1.png'}`} alt={product?.name} width={100} height={100} />
+                            <Image
+                                className="rounded-lg"
+                                src={product?.image ? product.image : '/images/DSC_0282 1.png'}
+                                alt={product?.name}
+                                width={100}
+                                height={100}
+                            />
                             <p className="text-gray-500 mt-1">Цена: {product?.sellPricePerUnit} ₽</p>
                         </div>
                         <div className="flex items-center gap-3">
@@ -103,18 +115,18 @@ const ProductModal = ({ isOpen, onClose, product }) => {
                     <div className="mb-4">
                         <h3 className="font-semibold mb-2">Дополнительно</h3>
                         <div className="grid grid-cols-3 gap-5 max-h-40 lg:max-h-60 overflow-y-auto pr-1">
-                            {spices.map(({ id, name, price }) => {
-                                const isSelected = selectedSpices.includes(id);
+                            {addons.map(({ id, name, sellPricePerUnit }) => {
+                                const isSelected = selectedAddons.includes(id);
                                 return (
                                     <div
                                         key={id}
-                                        onClick={() => toggleSpice(id)}
+                                        onClick={() => toggleAddon(id)}
                                         className={`flex items-center justify-center text-center px-3 py-2 h-20 rounded-lg cursor-pointer shadow-sm transition-colors font-medium text-sm ${isSelected ? 'bg-yellow-400 text-black' : 'bg-gray-100 hover:bg-gray-200'
                                             }`}
                                     >
                                         <div>
                                             {name}
-                                            <div className="text-xs text-gray-500">{price} ₽</div>
+                                            <div className="text-xs text-gray-500">{sellPricePerUnit} ₽</div>
                                         </div>
                                     </div>
                                 );

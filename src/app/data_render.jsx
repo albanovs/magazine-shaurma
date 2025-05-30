@@ -2,15 +2,15 @@
 
 import ProductCard from "../components/shared/ProductCart";
 import Category from "../components/shared/Category";
-import Loader from "../components/ui/loader";
 import { useEffect, useState } from "react";
 
 export default function GlobalPage() {
     const [shopId, setShopId] = useState(null);
     const [productGroups, setProductGroups] = useState([]);
-    const [products, setProducts] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [activeCategory, setActiveCategory] = useState('Все');
-    const [loading, setLoading] = useState(false); // состояние загрузки
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function fetchShops() {
@@ -34,7 +34,18 @@ export default function GlobalPage() {
             try {
                 const res = await fetch(`/api/groups/${shopId}`);
                 const data = await res.json();
-                setProductGroups(data.items || []);
+
+                const uniqueGroups = [];
+                const namesSet = new Set();
+
+                (data.items || []).forEach(group => {
+                    if (!namesSet.has(group.name)) {
+                        namesSet.add(group.name);
+                        uniqueGroups.push(group);
+                    }
+                });
+
+                setProductGroups(uniqueGroups);
             } catch (error) {
                 console.error('Ошибка загрузки групп продуктов:', error);
             }
@@ -44,29 +55,76 @@ export default function GlobalPage() {
     }, [shopId]);
 
     useEffect(() => {
-        async function fetchProducts() {
+        async function fetchAllProducts() {
             if (!shopId) return;
-            setLoading(true); // показать прелоадер
+            setLoading(true);
 
             try {
-                const url =
-                    activeCategory === 'Все'
-                        ? `/api/product/${shopId}`
-                        : `/api/category/${shopId}/products/${activeCategory}`;
-
-                const res = await fetch(url);
+                const res = await fetch(`/api/product/${shopId}`);
                 const data = await res.json();
-                setProducts(data.items || []);
-                localStorage.setItem('products', JSON.stringify(data.items));
+                const validProducts = data.items
+                    .filter((product) =>
+                        ['Product', 'TechCard', 'Softdrinks'].includes(product.productType) &&
+                        Number(product.sellPricePerUnit) > 0
+                    );
+
+                setAllProducts(validProducts);
+                setFilteredProducts(validProducts);
+                localStorage.setItem('products', JSON.stringify(validProducts));
             } catch (error) {
                 console.error('Ошибка загрузки товаров:', error);
             } finally {
-                setLoading(false); // скрыть прелоадер
+                setLoading(false);
             }
         }
 
-        fetchProducts();
-    }, [shopId, activeCategory]);
+        fetchAllProducts();
+    }, [shopId]);
+
+    useEffect(() => {
+        if (activeCategory === 'Все') {
+            const shaurmaGroup = productGroups.find(g => g.name === 'Шаурма');
+            const shavermaGroup = productGroups.find(g => g.name === 'Шаверма');
+
+            const prioritizedGroupIds = [
+                shaurmaGroup?.id,
+                shavermaGroup?.id
+            ].filter(Boolean);
+            const sortedProducts = [...allProducts].sort((a, b) => {
+                const aPriority = prioritizedGroupIds.includes(a.groupId) ? prioritizedGroupIds.indexOf(a.groupId) : Infinity;
+                const bPriority = prioritizedGroupIds.includes(b.groupId) ? prioritizedGroupIds.indexOf(b.groupId) : Infinity;
+                return aPriority - bPriority;
+            });
+
+            setFilteredProducts(sortedProducts);
+        } else {
+            const selectedGroup = productGroups.find(group => group.name === activeCategory);
+            if (selectedGroup) {
+                const filtered = allProducts.filter(product => product.groupId === selectedGroup.id);
+                setFilteredProducts(filtered);
+            } else {
+                setFilteredProducts([]);
+            }
+        }
+    }, [activeCategory, allProducts, productGroups]);
+
+
+    useEffect(() => {
+        if (!productGroups.length || !allProducts.length) return;
+
+        const addOnsGroup = productGroups.find(g => g.name === 'Добавки');
+        const saucesGroup = productGroups.find(g => g.name === 'Соусы');
+
+        if (addOnsGroup) {
+            const addOnsProducts = allProducts.filter(p => p.groupId === addOnsGroup.id);
+            localStorage.setItem('addOns', JSON.stringify(addOnsProducts));
+        }
+
+        if (saucesGroup) {
+            const saucesProducts = allProducts.filter(p => p.groupId === saucesGroup.id);
+            localStorage.setItem('sauces', JSON.stringify(saucesProducts));
+        }
+    }, [productGroups, allProducts]);
 
     return (
         <div className="pb-10">
@@ -75,7 +133,7 @@ export default function GlobalPage() {
                 onSelectCategory={setActiveCategory}
                 loading={!productGroups.length}
             />
-            <ProductCard loading={loading} product={products} />
+            <ProductCard name={activeCategory} loading={loading} product={filteredProducts} />
         </div>
     );
 }

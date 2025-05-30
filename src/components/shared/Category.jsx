@@ -39,8 +39,8 @@ export default function Category({ productGroups, onSelectCategory, loading }) {
                             {productGroups.map((category) => (
                                 <button
                                     key={category.id}
-                                    onClick={() => handleClick(category.id)}
-                                    className={`px-6 py-2 rounded-[10px] whitespace-nowrap transition-all ${activeCategory === category.id
+                                    onClick={() => handleClick(category.name)}
+                                    className={`px-6 py-2 rounded-[10px] whitespace-nowrap transition-all ${activeCategory === category.name
                                         ? 'bg-yellow-400 text-black'
                                         : 'bg-[#EDF6FF] text-[#0F1F2F] hover:bg-gray-600'
                                         }`}
