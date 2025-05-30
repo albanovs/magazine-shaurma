@@ -35,11 +35,7 @@ const ProductCard = ({ name, product, loading }) => {
             (() => {
               const order = ['Шаурма', 'Шаверма', 'Място', 'Комбо'];
               const groupedEntries = Object.entries(product);
-
-              // Фильтруем группы, у которых есть товары
               const filteredEntries = groupedEntries.filter(([_, products]) => products.length > 0);
-
-              // Сортируем с учётом order, оставшиеся идут в конец
               const sortedEntries = [
                 ...order
                   .map((key) => filteredEntries.find(([groupName]) => groupName === key))
@@ -94,7 +90,7 @@ const ProductItem = ({ product, onSelect }) => (
     className="bg-[#0F1F2F] text-white flex flex-col justify-between cursor-pointer shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2"
   >
     <div className="relative">
-      <a href={`/detail/${product.id}`}>
+      <a href={`/detail/${product.id}/${product.groupId}`}>
         <img
           src={product.image || 'images/DSC_0282 1.png'}
           alt={product.name}

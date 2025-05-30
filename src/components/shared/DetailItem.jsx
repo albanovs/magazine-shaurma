@@ -4,7 +4,7 @@ import { ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import ProductModal from "../ui/ProductModal";
 
-export default function DetailItem({ id }) {
+export default function DetailItem({ id, groupId }) {
     const [datas, setDatas] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -41,7 +41,6 @@ export default function DetailItem({ id }) {
                 />
                 <div className='space-y-5'>
                     <h2 className='lg:text-[32px] text-[28px] uppercase font-extrabold'>{filteredProduct.name}</h2>
-                    {/* <p>Состав: лаваш, помидоры....</p> */}
                     <h4 className='lg:text-[32px] text-[28px] font-bold'>{filteredProduct.sellPricePerUnit} ₽</h4>
                     <div className='flex items-center gap-5'>
                         <button
@@ -57,7 +56,7 @@ export default function DetailItem({ id }) {
             <h2 className="text-[28px] mt-20 md:text-4xl font-bold uppercase">добавьте к заказу</h2>
             <div className='mt-5'>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {datas.slice(0, 4).map(product => (
+                    {datas.filter(product => product.groupId === groupId).map(product => (
                         <div
                             key={product.id}
                             className="bg-[#0F1F2F] text-white cursor-pointer shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2"
