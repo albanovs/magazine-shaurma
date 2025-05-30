@@ -35,45 +35,44 @@ const ProductCard = ({ name, product, loading }) => {
             (() => {
               const order = ['Шаурма', 'Шаверма', 'Място', 'Комбо'];
               const groupedEntries = Object.entries(product);
+
+              // Фильтруем группы, у которых есть товары
+              const filteredEntries = groupedEntries.filter(([_, products]) => products.length > 0);
+
+              // Сортируем с учётом order, оставшиеся идут в конец
               const sortedEntries = [
                 ...order
-                  .map((key) => groupedEntries.find(([groupName]) => groupName === key))
+                  .map((key) => filteredEntries.find(([groupName]) => groupName === key))
                   .filter(Boolean),
-                ...groupedEntries.filter(([groupName]) => !order.includes(groupName)),
+                ...filteredEntries.filter(([groupName]) => !order.includes(groupName)),
               ];
 
               return sortedEntries.map(([groupName, products]) => (
                 <div key={groupName} className="mb-12">
                   <h2 className="text-2xl font-bold text-white mb-6">{groupName}</h2>
-                  {products.length === 0 ? (
-                    <p className="text-gray-400">Товаров нет</p>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                      {products.map((product) => (
-                        <ProductItem
-                          key={product.id}
-                          product={product}
-                          onSelect={() => setSelectedProduct(product)}
-                        />
-                      ))}
-                    </div>
-                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {products.map((product) => (
+                      <ProductItem
+                        key={product.id}
+                        product={product}
+                        onSelect={() => setSelectedProduct(product)}
+                      />
+                    ))}
+                  </div>
                 </div>
               ));
             })()
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {product.length === 0 ? (
-                <p className="text-gray-400">Товаров нет</p>
-              ) : (
-                product.map((product) => (
+              {product.length === 0
+                ? null
+                : product.map((product) => (
                   <ProductItem
                     key={product.id}
                     product={product}
                     onSelect={() => setSelectedProduct(product)}
                   />
-                ))
-              )}
+                ))}
             </div>
           )}
         </>
