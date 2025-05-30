@@ -9,9 +9,7 @@ export default function Category({ productGroups, onSelectCategory, loading }) {
         'Шаверма',
         'Мясо',
         'КОМБО',
-        'Другие блюда',
         'Лаваши',
-        'Овощи',
         'Соусы',
         'Добавки',
     ];
@@ -26,9 +24,8 @@ export default function Category({ productGroups, onSelectCategory, loading }) {
     const filteredAndSortedCategories = React.useMemo(() => {
         if (!productGroups) return [];
 
-        // Убираем "Воды минеральные и сладкие" и "Пиво"
         const filtered = productGroups.filter(
-            cat => cat.name !== 'Воды минеральные и сладкие' && cat.name !== 'Пиво'
+            cat => cat.name !== 'Воды минеральные и сладкие' && cat.name !== 'Пиво' && cat.name !== 'Овощи' && cat.name !== 'Другие блюда' && cat.name !== 'Соусы'
         );
 
         const orderMap = new Map(orderedCategories.map((cat, i) => [cat.toLowerCase(), i]));
@@ -69,8 +66,8 @@ export default function Category({ productGroups, onSelectCategory, loading }) {
                             <button
                                 onClick={() => handleClick('Все')}
                                 className={`px-6 py-2 rounded-[10px] whitespace-nowrap transition-all ${activeCategory === 'Все'
-                                        ? 'bg-yellow-400 text-black'
-                                        : 'bg-[#EDF6FF] text-[#0F1F2F] hover:bg-gray-600'
+                                    ? 'bg-yellow-400 text-black'
+                                    : 'bg-[#EDF6FF] text-[#0F1F2F] hover:bg-gray-600'
                                     }`}
                             >
                                 Все
@@ -81,8 +78,8 @@ export default function Category({ productGroups, onSelectCategory, loading }) {
                                     key={category.id}
                                     onClick={() => handleClick(category.name)}
                                     className={`px-6 py-2 rounded-[10px] whitespace-nowrap transition-all ${activeCategory === category.name
-                                            ? 'bg-yellow-400 text-black'
-                                            : 'bg-[#EDF6FF] text-[#0F1F2F] hover:bg-gray-600'
+                                        ? 'bg-yellow-400 text-black'
+                                        : 'bg-[#EDF6FF] text-[#0F1F2F] hover:bg-gray-600'
                                         }`}
                                 >
                                     {category.name}
