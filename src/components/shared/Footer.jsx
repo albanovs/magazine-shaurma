@@ -18,11 +18,13 @@ export default function Footer({ onCategoryClick }) {
         const res = await fetch(`/api/groups/${shopId}`);
         const data = await res.json();
 
+        const excluded = ['Пиво', 'Воды минеральные и сладкие', 'Овощи'];
+
         const uniqueGroups = [];
         const namesSet = new Set();
 
         (data.items || []).forEach(group => {
-          if (!namesSet.has(group.name)) {
+          if (!namesSet.has(group.name) && !excluded.includes(group.name)) {
             namesSet.add(group.name);
             uniqueGroups.push(group);
           }
@@ -39,7 +41,7 @@ export default function Footer({ onCategoryClick }) {
 
   return (
     <footer className="bg-[#162C52] lg:px-20 px-5 text-white text-sm">
-      <div className=" mx-auto pt-10">
+      <div className="mx-auto pt-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 lg:flex lg:justify-between">
           <div className="space-y-2">
             <p><a href="/about">О компании</a></p>
