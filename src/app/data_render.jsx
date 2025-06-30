@@ -2,13 +2,14 @@
 
 import ProductCard from "../components/shared/ProductCart";
 import Category from "../components/shared/Category";
+import Footer from "../components/shared/Footer";
 import { useEffect, useRef, useState } from "react";
 
 export default function GlobalPage() {
     const [shopId, setShopId] = useState(null);
     const [productGroups, setProductGroups] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([]); // теперь может быть объект или массив
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [activeCategory, setActiveCategory] = useState('Все');
     const [loading, setLoading] = useState(false);
     const productsRef = useRef(null);
@@ -84,7 +85,6 @@ export default function GlobalPage() {
 
     useEffect(() => {
         if (activeCategory === 'Все') {
-            // сгруппировать все продукты по категориям
             const grouped = {};
             productGroups.forEach(group => {
                 grouped[group.name] = allProducts.filter(p => p.groupId === group.id);
@@ -99,6 +99,7 @@ export default function GlobalPage() {
                 setFilteredProducts([]);
             }
         }
+
         if (productsRef.current) {
             productsRef.current.scrollIntoView({ behavior: 'smooth' });
         }
@@ -121,14 +122,24 @@ export default function GlobalPage() {
         }
     }, [productGroups, allProducts]);
 
+    const handleCategoryClickFromFooter = (categoryName) => {
+        setActiveCategory(categoryName);
+        if (productsRef.current) {
+            productsRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
-        <div ref={productsRef} className="pb-10">
-            <Category
-                productGroups={productGroups}
-                onSelectCategory={setActiveCategory}
-                loading={!productGroups.length}
-            />
-            <ProductCard name={activeCategory} loading={loading} product={filteredProducts} />
-        </div>
+        <>
+            <div ref={productsRef}>
+                <Category
+                    productGroups={productGroups}
+                    onSelectCategory={setActiveCategory}
+                    loading={!productGroups.length}
+                />
+                <ProductCard name={activeCategory} loading={loading} product={filteredProducts} />
+            </div>
+            <Footer onCategoryClick={handleCategoryClickFromFooter} />
+        </>
     );
 }
