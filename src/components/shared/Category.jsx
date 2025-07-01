@@ -7,11 +7,15 @@ export default function Category({ productGroups, onSelectCategory, loading }) {
     const orderedCategories = [
         'Шаурма',
         'Шаверма',
-        'Мясо',
+        'Шашлык',
         'КОМБО',
+        'Гарниры',
+        'Добавки',
+        'Напитки',
+        'Холодные напитки',
+        'Мясо',
         'Лаваши',
         'Соусы',
-        'Добавки',
     ];
 
     function handleClick(category) {
