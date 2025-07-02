@@ -30,7 +30,25 @@ export default function Footer({ onCategoryClick }) {
           }
         });
 
-        setProductGroups(uniqueGroups);
+        const orderedCategories = [
+          'Шаурма',
+          'Шаверма',
+          'Шашлык',
+          'КОМБО',
+          'Гарниры',
+          'Добавки',
+          'Напитки',
+          'Холодные напитки',
+          'Мясо',
+          'Лаваши',
+          'Соусы',
+        ];
+
+        const sortedGroups = orderedCategories
+          .map(name => uniqueGroups.find(group => group.name === name))
+          .filter(Boolean);
+
+        setProductGroups(sortedGroups);
       } catch (error) {
         console.error('Ошибка загрузки категорий в футере:', error);
       }
@@ -38,6 +56,7 @@ export default function Footer({ onCategoryClick }) {
 
     fetchProductGroups();
   }, []);
+
 
   return (
     <footer className="bg-[#162C52] lg:px-20 px-5 text-white text-sm">
